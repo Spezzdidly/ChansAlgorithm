@@ -54,7 +54,6 @@ int findLeftMost(vector<coord> P) {
 
 
 double findPolarAngle(coord p1, coord p2) {
-
 	return atan2((p2.y - p1.y), (p2.x - p1.x)) * 180 / PI;
 }
 
@@ -116,7 +115,6 @@ coord nextToTop(stack<coord> P) {
 
 
 int orientation(coord x, coord y, coord z) {
-
 	double value = (y.y - x.y) * (z.x - y.x) -
 		(y.x - x.x) * (z.y - y.y);
 

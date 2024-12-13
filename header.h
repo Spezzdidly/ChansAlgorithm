@@ -1,5 +1,3 @@
-#pragma warning(disable : 4996)
-
 #include <algorithm>
 #include <chrono>
 #include <cmath>
