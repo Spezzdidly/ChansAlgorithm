@@ -42,13 +42,14 @@ bool operator!=(const coord& point1, const coord& point2) {
 typedef vector<vector<coord>> partitions;
 
 // Function declarations go here
-stack<coord> ChansAlgorithm(vector<coord> P);
-double findDistance(coord p1, coord p2);
-int findLeftMost(vector<coord> P);
-double findPolarAngle(coord p1, coord p2);
-vector<coord> GrahamsScan(vector<coord> P);
-coord nextToTop(stack<coord> P);
-int orientation(coord x, coord y, coord z);
-partitions partition(vector<coord> P, int k, int m);
-vector<coord> readPoints(ifstream& fin);
-vector<coord> stackToVector(stack<coord> S);
+stack<coord> 	ChansAlgorithm(vector<coord> P);
+void			duplicateAngles(vector<coord>& P);
+double 			findDistance(coord p1, coord p2);
+int 			findLeftMost(vector<coord> P);
+double 			findPolarAngle(coord p1, coord p2);
+vector<coord> 	GrahamsScan(vector<coord> P);
+coord 			nextToTop(stack<coord> P);
+int 			orientation(coord x, coord y, coord z);
+partitions 		partition(vector<coord> P, int k, int m);
+vector<coord> 	readPoints(ifstream& fin);
+vector<coord> 	stackToVector(stack<coord> S);

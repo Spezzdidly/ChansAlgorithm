@@ -8,9 +8,12 @@ int main(int argc, char** argv) {
 	vector<coord>	hull;
 	vector<coord>	P = { {0, 3}, {2, 2}, {1, 1}, {2, 1},
 						{3, 0}, {0, 0}, {3, 3} };
-	coord p1 = { -7, 2 }, p2 = { -INFINITY, 0 }, p3 = { 5, 0 };
+	coord		    p1 = { -7, 2 }, p2 = { -INFINITY, 0 }, p3 = { 5, 0 };
 
-	
+	if (argc != 3) {
+		cout << "Invalid input\n" << "Usage: main.exe <file1> <file2>";
+		exit(3);
+	}			
 
 	return 0;
 }
@@ -23,6 +26,23 @@ stack<coord> ChansAlgorithm(vector<coord> P) {
 
 	return tempS;
 }
+
+
+
+void duplicateAngles(vector<coord>& P) {
+	int tmp = 1;
+
+	for (int i = 2; i < int(P.size()); i++){
+		if (P.at(i) == P.at(tmp))
+			P.erase(P.begin() + i-1);
+		else if (P.at(i).POLAR_ANGLE == P.at(tmp).POLAR_ANGLE) {
+			// implement checking distance and deleting element closer to p0	
+		}
+	}
+}
+	
+
+
 
 
 
@@ -80,6 +100,10 @@ vector<coord> GrahamsScan(vector<coord> P) {
 		[](coord& a, coord& b) {
 			return a.POLAR_ANGLE < b.POLAR_ANGLE;
 		});
+
+	// Going to need to check for duplicate angles in the newly sorted list (skipping p0)
+	// Then if any are found we need to remove the one that is closer to p0
+	
 
 	// Main loop of Grahams 
 	for (int i = 0; i < np; i++) {
@@ -140,11 +164,11 @@ partitions partition(vector<coord> P, int k, int m) {
 
 vector<coord> readPoints(ifstream& fin) {
 	vector<coord>	P;
-	coord			tmp;
+	coord			c;
 
 	while (!fin.eof()) {
-		fin >> tmp.x >> tmp.y;
-		P.push_back(tmp);
+		fin >> c.x >> c.y;
+		P.push_back(c);
 	}
 
 	return P;
