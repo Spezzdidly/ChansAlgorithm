@@ -19,17 +19,9 @@ int main(int argc, char** argv) {
 stack<coord> ChansAlgorithm(vector<coord> P) {
 	int t, m;
 	bool foundHull = false;
+	stack<coord> tempS;
 
-	for (t = 0; t < int(P.size()); t++) {
-		stack<coord> ConvexHull;
-		m = min(int(pow(2, pow(2, t))), int(P.size()));
-		foundHull = PartialHull(ConvexHull, P, m);
-		if (foundHull)
-			return ConvexHull;
-	}
-
-	stack<coord> Hull;
-	return Hull;
+	return tempS;
 }
 
 
