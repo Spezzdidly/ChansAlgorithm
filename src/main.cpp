@@ -11,18 +11,20 @@ int main(int argc, char** argv) {
 	coord		    p1 = { -7, 2 }, p2 = { -INFINITY, 0 }, p3 = { 5, 0 };
 
 	if (argc != 3) {
-		cout << "Invalid input\n" << "Usage: main.exe <file1> <file2>";
+		cout << "Invalid input\n" << "Usage: main.exe <path-to-file> <path-to-file2>";
 		exit(3);
-	}			
+	}
+
+
 
 	return 0;
 }
 
 // function definitions go here
 stack<coord> ChansAlgorithm(vector<coord> P) {
-	int t, m;
-	bool foundHull = false;
-	stack<coord> tempS;
+	int				t, m;
+	bool			foundHull = false;
+	stack<coord>	tempS;
 
 	return tempS;
 }
@@ -30,13 +32,21 @@ stack<coord> ChansAlgorithm(vector<coord> P) {
 
 
 void duplicateAngles(vector<coord>& P) {
-	int tmp = 1;
+	int		tmp = 1;
+	double		DISTANCE_ONE, DISTANCE_TWO;
 
 	for (int i = 2; i < int(P.size()); i++){
 		if (P.at(i) == P.at(tmp))
-			P.erase(P.begin() + i-1);
+			P.erase(P.begin() + tmp);
 		else if (P.at(i).POLAR_ANGLE == P.at(tmp).POLAR_ANGLE) {
-			// implement checking distance and deleting element closer to p0	
+			DISTANCE_ONE = findDistance(P.at(0), P.at(i));
+			DISTANCE_TWO = findDistance(P.at(0), P.at(tmp));
+
+			// Remove closest point
+			if (DISTANCE_ONE > DISTANCE_TWO)
+				P.erase(P.begin() + tmp);
+			else
+				P.erase(P.begin() + i);
 		}
 	}
 }

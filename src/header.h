@@ -23,8 +23,7 @@ struct coord {
 	// variable for sorting points by polar angle
 	double POLAR_ANGLE = 0.0;
 
-
-
+	
 	friend bool operator==(const coord& point1, const coord& point2);
 	friend bool operator!=(const coord& point1, const coord& point2);
 };
