@@ -9,13 +9,19 @@ int main(int argc, char** argv) {
 	vector<coord>	P = { {0, 3}, {2, 2}, {1, 1}, {2, 1},
 						{3, 0}, {0, 0}, {3, 3} };
 	coord		    p1 = { -7, 2 }, p2 = { -INFINITY, 0 }, p3 = { 5, 0 };
+    string          fileName1 = "Set1.txt";
 
 	if (argc != 3) {
 		cout << "Invalid input\n" << "Usage: main.exe <path-to-file> <path-to-file2>";
-		exit(3);
-	}
+    i1.open(fileName1);
+
+    if (!i1.is_open()){
+        cout << fileName1 << " failed to open.\n";
+        exit(1);
+    }
 
 
+    i1.close();
 
 	return 0;
 }

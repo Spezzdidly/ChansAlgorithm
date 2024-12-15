@@ -15,7 +15,7 @@
 using namespace std;
 using namespace chrono;
 
-// Simple coordinate structure
+// Coordinate structure
 struct coord {
 	double x = 0.0;
 	double y = 0.0;
