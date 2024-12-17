@@ -13,6 +13,8 @@ int main(int argc, char** argv) {
 
 	if (argc != 3) {
 		cout << "Invalid input\n" << "Usage: main.exe <path-to-file> <path-to-file2>";
+		exit(3);
+	}
     i1.open(fileName1);
 
     if (!i1.is_open()){
