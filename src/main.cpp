@@ -6,10 +6,9 @@ int main(int argc, char** argv) {
 	partitions		Partition;
 	stack<coord>	ConvexHull;
 	vector<coord>	hull;
-	vector<coord>	P = { {0, 3}, {2, 2}, {1, 1}, {2, 1},
-						{3, 0}, {0, 0}, {3, 3} };
+	vector<coord>	P;
 	coord		    p1 = { -7, 2 }, p2 = { -INFINITY, 0 }, p3 = { 5, 0 };
-    string          fileName1 = "Set1.txt";
+    string          fileName1 = "points\\dupe_angles_set.txt";
 
 	if (argc != 3) {
 		cout << "Invalid input\n" << "Usage: main.exe <path-to-file> <path-to-file2>";
@@ -21,6 +20,9 @@ int main(int argc, char** argv) {
         cout << fileName1 << " failed to open.\n";
         exit(1);
     }
+
+	P = readPoints(i1);
+	hull = GrahamsScan(P);
 
 
     i1.close();
@@ -40,23 +42,11 @@ stack<coord> ChansAlgorithm(vector<coord> P) {
 
 
 void duplicateAngles(vector<coord>& P) {
-	int		tmp = 1;
-	double		DISTANCE_ONE, DISTANCE_TWO;
+	int			tmp = 0;
+	double		DISTANCE_ONE = 0, DISTANCE_TWO = 0;
+	
+	// FUCK I DONT KNOW WHAT TO DO WITH THIS FUNCTION
 
-	for (int i = 2; i < int(P.size()); i++){
-		if (P.at(i) == P.at(tmp))
-			P.erase(P.begin() + tmp);
-		else if (P.at(i).POLAR_ANGLE == P.at(tmp).POLAR_ANGLE) {
-			DISTANCE_ONE = findDistance(P.at(0), P.at(i));
-			DISTANCE_TWO = findDistance(P.at(0), P.at(tmp));
-
-			// Remove closest point
-			if (DISTANCE_ONE > DISTANCE_TWO)
-				P.erase(P.begin() + tmp);
-			else
-				P.erase(P.begin() + i);
-		}
-	}
 }
 	
 
@@ -118,10 +108,8 @@ vector<coord> GrahamsScan(vector<coord> P) {
 		[](coord& a, coord& b) {
 			return a.POLAR_ANGLE < b.POLAR_ANGLE;
 		});
-
-	// Going to need to check for duplicate angles in the newly sorted list (skipping p0)
-	// Then if any are found we need to remove the one that is closer to p0
 	
+	//duplicateAngles(P);
 
 	// Main loop of Grahams 
 	for (int i = 0; i < np; i++) {
