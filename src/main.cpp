@@ -44,10 +44,6 @@ stack<coord> ChansAlgorithm(vector<coord> P) {
 void duplicateAngles(vector<coord>& P) {
 	int			tmp = 0;
 	double		DISTANCE_ONE = 0, DISTANCE_TWO = 0;
-	vector<coord>::iterator pt;
-	
-	// Remove duplicate points
-	pt = std::unique(P.begin(), P.end());
 
 	// Then I need to remove the shorter distance for duplicate polar angle values
 }
@@ -73,6 +69,19 @@ int findLeftMost(vector<coord> P) {
 
 
 
+int findBottomMost(vector<coord> P) {
+	int tmp = 0;
+
+	for (int i = 1; i < int(P.size()); i++) {
+		if (P.at(i).y < P.at(tmp).y)
+			tmp = i;
+	}
+
+	return tmp;
+}
+
+
+
 double findPolarAngle(coord p1, coord p2) {
 	return atan2((p2.y - p1.y), (p2.x - p1.x)) * 180 / PI;
 }
@@ -85,24 +94,14 @@ vector<coord> GrahamsScan(vector<coord> P) {
 	int				tmp = 0, i = 0;
 	int				np = int(P.size());
 
-	// Find the index of the lowest point in P
-	for (i = 1; i < np; i++) {
-		if (P.at(i).y < P.at(tmp).y)
-			tmp = i;
-	}
+	tmp = findBottomMost(P);
 
 	// Move p0 to the front
 	temp = P.at(tmp);
 	P.at(tmp) = P.at(0);
 	P.at(0) = temp;
 
-	for (int i = 1; i < np; i++) {
-		P.at(i).POLAR_ANGLE = findPolarAngle(P.at(0), P.at(i));
-
-
-		if (P.at(i).POLAR_ANGLE < 0.0)
-			P.at(i).POLAR_ANGLE = 180 + P.at(i).POLAR_ANGLE;
-	}
+	findPolarAngle(P);
 
 	sort(P.begin() + 1, P.end(),
 		[](coord& a, coord& b) {
@@ -178,6 +177,33 @@ vector<coord> readPoints(ifstream& fin) {
 	}
 
 	return P;
+}
+
+
+
+vector<coord> removeDupes(vector<coord> P) {
+	vector<coord>::iterator pt;
+	vector<coord>			tmp;
+	/*
+	sort(P.begin() + 1, P.end(),
+		[](coord& a, coord& b) {
+			
+			// return a.POLAR_ANGLE < b.POLAR_ANGLE;
+		});
+		*/
+
+	return tmp;
+}
+
+
+
+void findPolarAngle(vector<coord>& P) {
+	for (int i = 1; i < int(P.size()); i++) {
+		P.at(i).POLAR_ANGLE = findPolarAngle(P.at(0), P.at(i));
+
+		if (P.at(i).POLAR_ANGLE < 0.0)
+			P.at(i).POLAR_ANGLE = 180 + P.at(i).POLAR_ANGLE;
+	}
 }
 
 

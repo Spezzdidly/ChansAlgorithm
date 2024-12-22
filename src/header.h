@@ -22,7 +22,7 @@ struct coord {
 
 	// variable for sorting points by polar angle
 	double POLAR_ANGLE = 0.0;
-
+	double DISTANCE = 0.0;
 	
 	friend bool operator==(const coord& point1, const coord& point2);
 	friend bool operator!=(const coord& point1, const coord& point2);
@@ -45,10 +45,13 @@ stack<coord> 	ChansAlgorithm(vector<coord> P);
 void			duplicateAngles(vector<coord>& P);
 double 			findDistance(coord p1, coord p2);
 int 			findLeftMost(vector<coord> P);
+int				findBottomMost(vector<coord> P);
 double 			findPolarAngle(coord p1, coord p2);
 vector<coord> 	GrahamsScan(vector<coord> P);
 coord 			nextToTop(stack<coord> P);
 int 			orientation(coord x, coord y, coord z);
 partitions 		partition(vector<coord> P, int k, int m);
 vector<coord> 	readPoints(ifstream& fin);
+vector<coord>	removeDupes(vector<coord> P);
+void			findPolarAngle(vector<coord>& P);
 vector<coord> 	stackToVector(stack<coord> S);
