@@ -124,6 +124,8 @@ vector<coord> GrahamsScan(vector<coord> P) {
 
 	findDistance(P);
 
+	P = removeDupes(P);
+
 	sortByPolarAngle(P);
 	
 	duplicateAngles(P);
@@ -201,16 +203,15 @@ vector<coord> readPoints(ifstream& fin) {
 
 vector<coord> removeDupes(vector<coord> P) {
 	vector<coord>::iterator pt;
-	vector<coord>			tmp;
-	/*
+
 	sort(P.begin() + 1, P.end(),
 		[](coord& a, coord& b) {
-			
-			// return a.POLAR_ANGLE < b.POLAR_ANGLE;
+			return a.DISTANCE < b.DISTANCE;
 		});
-		*/
 
-	return tmp;
+	P.erase(std::unique(P.begin(), P.end()), P.end());
+
+	return P;
 }
 
 
