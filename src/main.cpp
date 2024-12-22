@@ -82,7 +82,7 @@ int findBottomMost(vector<coord> P) {
 
 
 
-double findPolarAngle(coord p1, coord p2) {
+double polarAngle(coord p1, coord p2) {
 	return atan2((p2.y - p1.y), (p2.x - p1.x)) * 180 / PI;
 }
 
@@ -103,10 +103,7 @@ vector<coord> GrahamsScan(vector<coord> P) {
 
 	findPolarAngle(P);
 
-	sort(P.begin() + 1, P.end(),
-		[](coord& a, coord& b) {
-			return a.POLAR_ANGLE < b.POLAR_ANGLE;
-		});
+	sortByPolarAngle(P);
 	
 	duplicateAngles(P);
 
@@ -199,11 +196,20 @@ vector<coord> removeDupes(vector<coord> P) {
 
 void findPolarAngle(vector<coord>& P) {
 	for (int i = 1; i < int(P.size()); i++) {
-		P.at(i).POLAR_ANGLE = findPolarAngle(P.at(0), P.at(i));
+		P.at(i).POLAR_ANGLE = polarAngle(P.at(0), P.at(i));
 
 		if (P.at(i).POLAR_ANGLE < 0.0)
 			P.at(i).POLAR_ANGLE = 180 + P.at(i).POLAR_ANGLE;
 	}
+}
+
+
+
+void sortByPolarAngle(vector<coord>& P) {
+	sort(P.begin() + 1, P.end(),
+		[](coord& a, coord& b) {
+			return a.POLAR_ANGLE < b.POLAR_ANGLE;
+		});
 }
 
 
