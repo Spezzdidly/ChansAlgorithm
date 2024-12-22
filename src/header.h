@@ -42,8 +42,9 @@ typedef vector<vector<coord>> partitions;
 
 // Function declarations go here
 stack<coord> 	ChansAlgorithm(vector<coord> P);
+double 			distance(coord p1, coord p2);
 void			duplicateAngles(vector<coord>& P);
-double 			findDistance(coord p1, coord p2);
+void			findDistance(vector<coord>& P);
 int 			findLeftMost(vector<coord> P);
 int				findBottomMost(vector<coord> P);
 double 			polarAngle(coord p1, coord p2);

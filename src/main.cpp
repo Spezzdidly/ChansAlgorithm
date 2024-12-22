@@ -41,6 +41,12 @@ stack<coord> ChansAlgorithm(vector<coord> P) {
 
 
 
+double distance(coord p1, coord p2) {
+	return sqrt(pow((p2.x - p1.x), 2) + pow((p2.y - p1.y), 2));
+}
+
+
+
 void duplicateAngles(vector<coord>& P) {
 	int			tmp = 0;
 	double		DISTANCE_ONE = 0, DISTANCE_TWO = 0;
@@ -50,8 +56,10 @@ void duplicateAngles(vector<coord>& P) {
 
 
 
-double findDistance(coord p1, coord p2) {
-	return sqrt(pow((p2.x - p1.x), 2) + pow((p2.y - p1.y), 2));
+void findDistance(vector<coord>& P) {
+	for (int i = 1; i < int(P.size()); i++) {
+		P.at(i).DISTANCE = distance(P.at(0), P.at(i));
+	}
 }
 
 
@@ -88,6 +96,17 @@ double polarAngle(coord p1, coord p2) {
 
 
 
+void findPolarAngle(vector<coord>& P) {
+	for (int i = 1; i < int(P.size()); i++) {
+		P.at(i).POLAR_ANGLE = polarAngle(P.at(0), P.at(i));
+
+		if (P.at(i).POLAR_ANGLE < 0.0)
+			P.at(i).POLAR_ANGLE = 180 + P.at(i).POLAR_ANGLE;
+	}
+}
+
+
+
 vector<coord> GrahamsScan(vector<coord> P) {
 	coord			temp;
 	stack<coord>	stack;
@@ -102,6 +121,8 @@ vector<coord> GrahamsScan(vector<coord> P) {
 	P.at(0) = temp;
 
 	findPolarAngle(P);
+
+	findDistance(P);
 
 	sortByPolarAngle(P);
 	
@@ -190,17 +211,6 @@ vector<coord> removeDupes(vector<coord> P) {
 		*/
 
 	return tmp;
-}
-
-
-
-void findPolarAngle(vector<coord>& P) {
-	for (int i = 1; i < int(P.size()); i++) {
-		P.at(i).POLAR_ANGLE = polarAngle(P.at(0), P.at(i));
-
-		if (P.at(i).POLAR_ANGLE < 0.0)
-			P.at(i).POLAR_ANGLE = 180 + P.at(i).POLAR_ANGLE;
-	}
 }
 
 
