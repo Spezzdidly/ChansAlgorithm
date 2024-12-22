@@ -42,11 +42,15 @@ stack<coord> ChansAlgorithm(vector<coord> P) {
 
 
 void duplicateAngles(vector<coord>& P) {
+	vector<coord>::iterator pt;
 	int			tmp = 0;
 	double		DISTANCE_ONE = 0, DISTANCE_TWO = 0;
 	
-	// FUCK I DONT KNOW WHAT TO DO WITH THIS FUNCTION
+	// Remove duplicate points
+	pt = std::unique(P.begin(), P.end());
+	P.resize(std::distance(P.begin(), pt));
 
+	// Then I need to remove the shorter distance for duplicate polar angle values
 }
 	
 
