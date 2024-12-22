@@ -42,19 +42,15 @@ stack<coord> ChansAlgorithm(vector<coord> P) {
 
 
 void duplicateAngles(vector<coord>& P) {
-	vector<coord>::iterator pt;
 	int			tmp = 0;
 	double		DISTANCE_ONE = 0, DISTANCE_TWO = 0;
+	vector<coord>::iterator pt;
 	
 	// Remove duplicate points
 	pt = std::unique(P.begin(), P.end());
-	P.resize(std::distance(P.begin(), pt));
 
 	// Then I need to remove the shorter distance for duplicate polar angle values
 }
-	
-
-
 
 
 
@@ -113,7 +109,7 @@ vector<coord> GrahamsScan(vector<coord> P) {
 			return a.POLAR_ANGLE < b.POLAR_ANGLE;
 		});
 	
-	//duplicateAngles(P);
+	duplicateAngles(P);
 
 	// Main loop of Grahams 
 	for (int i = 0; i < np; i++) {
