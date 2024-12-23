@@ -6,16 +6,30 @@ int main(int argc, char** argv) {
 	partitions		Partition;
 	stack<coord>	ConvexHull;
 	vector<coord>	hull;
-	vector<coord>	P = { {0, 3}, {2, 2}, {1, 1}, {2, 1},
-						{3, 0}, {0, 0}, {3, 3} };
-	coord		    p1 = { -7, 2 }, p2 = { -INFINITY, 0 }, p3 = { 5, 0 };
+	vector<coord>	P;
+	coord		    p1 = { -5, -5 }, p2 = { 0, -5 }, p3 = { 4, -5 };
+    string          fileName1 = "points\\dupe_angles_set.txt";
 
 	if (argc != 3) {
 		cout << "Invalid input\n" << "Usage: main.exe <path-to-file> <path-to-file2>";
 		exit(3);
 	}
+    i1.open(fileName1);
+
+    if (!i1.is_open()){
+        cout << fileName1 << " failed to open.\n";
+        exit(1);
+    }
+
+	P = readPoints(i1);
+	hull = GrahamsScan(P);
+
+	for (int i = 0; i < hull.size(); i++) {
+		cout << "x: " << hull.at(i).x << "\ny: " << hull.at(i).y << endl;
+	}
 
 
+    i1.close();
 
 	return 0;
 }
@@ -31,33 +45,16 @@ stack<coord> ChansAlgorithm(vector<coord> P) {
 
 
 
-void duplicateAngles(vector<coord>& P) {
-	int		tmp = 1;
-	double		DISTANCE_ONE, DISTANCE_TWO;
-
-	for (int i = 2; i < int(P.size()); i++){
-		if (P.at(i) == P.at(tmp))
-			P.erase(P.begin() + tmp);
-		else if (P.at(i).POLAR_ANGLE == P.at(tmp).POLAR_ANGLE) {
-			DISTANCE_ONE = findDistance(P.at(0), P.at(i));
-			DISTANCE_TWO = findDistance(P.at(0), P.at(tmp));
-
-			// Remove closest point
-			if (DISTANCE_ONE > DISTANCE_TWO)
-				P.erase(P.begin() + tmp);
-			else
-				P.erase(P.begin() + i);
-		}
-	}
-}
-	
-
-
-
-
-
-double findDistance(coord p1, coord p2) {
+double distance(coord p1, coord p2) {
 	return sqrt(pow((p2.x - p1.x), 2) + pow((p2.y - p1.y), 2));
+}
+
+
+
+void findDistance(vector<coord>& P) {
+	for (int i = 1; i < int(P.size()); i++) {
+		P.at(i).DISTANCE = distance(P.at(0), P.at(i));
+	}
 }
 
 
@@ -75,8 +72,32 @@ int findLeftMost(vector<coord> P) {
 
 
 
-double findPolarAngle(coord p1, coord p2) {
+int findBottomMost(vector<coord> P) {
+	int tmp = 0;
+
+	for (int i = 1; i < int(P.size()); i++) {
+		if (P.at(i).y < P.at(tmp).y)
+			tmp = i;
+	}
+
+	return tmp;
+}
+
+
+
+double polarAngle(coord p1, coord p2) {
 	return atan2((p2.y - p1.y), (p2.x - p1.x)) * 180 / PI;
+}
+
+
+
+void findPolarAngle(vector<coord>& P) {
+	for (int i = 1; i < int(P.size()); i++) {
+		P.at(i).POLAR_ANGLE = polarAngle(P.at(0), P.at(i));
+
+		if (P.at(i).POLAR_ANGLE < 0.0)
+			P.at(i).POLAR_ANGLE = 180 + P.at(i).POLAR_ANGLE;
+	}
 }
 
 
@@ -85,38 +106,24 @@ vector<coord> GrahamsScan(vector<coord> P) {
 	coord			temp;
 	stack<coord>	stack;
 	int				tmp = 0, i = 0;
-	int				np = int(P.size());
 
-	// Find the index of the lowest point in P
-	for (i = 1; i < np; i++) {
-		if (P.at(i).y < P.at(tmp).y)
-			tmp = i;
-	}
+	tmp = findBottomMost(P);
 
 	// Move p0 to the front
 	temp = P.at(tmp);
 	P.at(tmp) = P.at(0);
 	P.at(0) = temp;
 
-	for (int i = 1; i < np; i++) {
-		P.at(i).POLAR_ANGLE = findPolarAngle(P.at(0), P.at(i));
+	findPolarAngle(P);
 
+	findDistance(P);
 
-		if (P.at(i).POLAR_ANGLE < 0.0)
-			P.at(i).POLAR_ANGLE = 180 + P.at(i).POLAR_ANGLE;
-	}
+	P = removeDupes(P);
 
-	sort(P.begin() + 1, P.end(),
-		[](coord& a, coord& b) {
-			return a.POLAR_ANGLE < b.POLAR_ANGLE;
-		});
-
-	// Going to need to check for duplicate angles in the newly sorted list (skipping p0)
-	// Then if any are found we need to remove the one that is closer to p0
-	
+	sortByPolarAngle(P);
 
 	// Main loop of Grahams 
-	for (int i = 0; i < np; i++) {
+	for (int i = 0; i < int(P.size()); i++) {
 		while (stack.size() > 1 && orientation(nextToTop(stack), stack.top(), P.at(i)) != 2) {
 			stack.pop();
 		}
@@ -182,6 +189,30 @@ vector<coord> readPoints(ifstream& fin) {
 	}
 
 	return P;
+}
+
+
+
+vector<coord> removeDupes(vector<coord> P) {
+	vector<coord>::iterator pt;
+
+	sort(P.begin() + 1, P.end(),
+		[](coord& a, coord& b) {
+			return a.DISTANCE < b.DISTANCE;
+		});
+
+	P.erase(std::unique(P.begin(), P.end()), P.end());
+
+	return P;
+}
+
+
+
+void sortByPolarAngle(vector<coord>& P) {
+	sort(P.begin() + 1, P.end(),
+		[](coord& a, coord& b) {
+			return a.POLAR_ANGLE < b.POLAR_ANGLE;
+		});
 }
 
 
