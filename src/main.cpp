@@ -7,7 +7,7 @@ int main(int argc, char** argv) {
 	stack<coord>	ConvexHull;
 	vector<coord>	hull;
 	vector<coord>	P;
-	coord		    p1 = { -7, 2 }, p2 = { -INFINITY, 0 }, p3 = { 5, 0 };
+	coord		    p1 = { -5, -5 }, p2 = { 0, -5 }, p3 = { 4, -5 };
     string          fileName1 = "points\\dupe_angles_set.txt";
 
 	if (argc != 3) {
@@ -23,6 +23,10 @@ int main(int argc, char** argv) {
 
 	P = readPoints(i1);
 	hull = GrahamsScan(P);
+
+	for (int i = 0; i < hull.size(); i++) {
+		cout << "x: " << hull.at(i).x << "\ny: " << hull.at(i).y << endl;
+	}
 
 
     i1.close();
@@ -43,15 +47,6 @@ stack<coord> ChansAlgorithm(vector<coord> P) {
 
 double distance(coord p1, coord p2) {
 	return sqrt(pow((p2.x - p1.x), 2) + pow((p2.y - p1.y), 2));
-}
-
-
-
-void duplicateAngles(vector<coord>& P) {
-	int			tmp = 0;
-	double		DISTANCE_ONE = 0, DISTANCE_TWO = 0;
-
-	// Then I need to remove the shorter distance for duplicate polar angle values
 }
 
 
@@ -111,7 +106,6 @@ vector<coord> GrahamsScan(vector<coord> P) {
 	coord			temp;
 	stack<coord>	stack;
 	int				tmp = 0, i = 0;
-	int				np = int(P.size());
 
 	tmp = findBottomMost(P);
 
@@ -127,11 +121,9 @@ vector<coord> GrahamsScan(vector<coord> P) {
 	P = removeDupes(P);
 
 	sortByPolarAngle(P);
-	
-	duplicateAngles(P);
 
 	// Main loop of Grahams 
-	for (int i = 0; i < np; i++) {
+	for (int i = 0; i < int(P.size()); i++) {
 		while (stack.size() > 1 && orientation(nextToTop(stack), stack.top(), P.at(i)) != 2) {
 			stack.pop();
 		}

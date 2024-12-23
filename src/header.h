@@ -36,14 +36,12 @@ bool operator!=(const coord& point1, const coord& point2) {
 	return point1.x != point2.x || point1.y != point2.y;
 }
 
-
 // Typedef(s)
 typedef vector<vector<coord>> partitions;
 
 // Function declarations go here
 stack<coord> 	ChansAlgorithm(vector<coord> P);
 double 			distance(coord p1, coord p2);
-void			duplicateAngles(vector<coord>& P);
 void			findDistance(vector<coord>& P);
 int 			findLeftMost(vector<coord> P);
 int				findBottomMost(vector<coord> P);
