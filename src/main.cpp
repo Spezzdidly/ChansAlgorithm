@@ -160,19 +160,14 @@ int orientation(coord x, coord y, coord z) {
 
 partitions partition(vector<coord> P, int k, int m) {
 	partitions Q;
-	int n = int(P.size());
-	vector<coord>::iterator it = P.begin();
 
-	for (int i = 0; i < k; i++) {
-		int currSize = min(m, int(distance(it, P.end())));
-		vector<coord> tmp(it, it + currSize);
-		Q.push_back(tmp);
-		it += currSize;
+	// Main thought is splitting the list up into chunks of "m" size and then the remaining two will be divided
+	// evenly between eachother or remove just enough from the second to last chunk to make the final chunk have 
+	// 3 points so that it meets the minimum requirement for being a convex hull
 
-		// Break out when all points distributed
-		if (it == P.end()) 
-			break;
-	}
+	// It seems like I can get away with leaving the final partition even if it is 1 or 2 points only
+	// I assume this is because Grahams will just return those two points and it is up to the rest of the 
+	// algorithm to determine if the point(s) are or aren't on the hull
 
 	return Q;
 }
