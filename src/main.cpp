@@ -8,12 +8,15 @@ int main(int argc, char** argv) {
 	vector<coord>	hull;
 	vector<coord>	P;
 	coord		    p1 = { -5, -5 }, p2 = { 0, -5 }, p3 = { 4, -5 };
-    string          fileName1 = "points\\dupe_angles_set.txt";
+    string          fileName1 = "points\\";
 
 	if (argc != 3) {
 		cout << "Invalid input\n" << "Usage: main.exe <path-to-file> <path-to-file2>";
 		exit(3);
 	}
+
+	fileName1 += static_cast<string>(argv[1]);
+
     i1.open(fileName1);
 
     if (!i1.is_open()){
@@ -21,12 +24,19 @@ int main(int argc, char** argv) {
         exit(1);
     }
 
+	// testing shit
 	P = readPoints(i1);
 	hull = GrahamsScan(P);
 
 	for (int i = 0; i < hull.size(); i++) {
 		cout << "x: " << hull.at(i).x << "\ny: " << hull.at(i).y << endl;
 	}
+
+	int m = int(hull.size());
+	double k0 = double(P.size()) / double(m);
+	int k = std::ceil(k0);
+
+	Partition = partition(P, k, m);
 
 
     i1.close();
@@ -81,13 +91,6 @@ int findBottomMost(vector<coord> P) {
 	}
 
 	return tmp;
-}
-
-
-
-void fooFunc(vector<coord> P) {
-	// test function for partitioning
-	
 }
 
 
@@ -167,7 +170,7 @@ int orientation(coord x, coord y, coord z) {
 
 partitions partition(vector<coord> P, int k, int m) {
 	partitions 				Q;
-	vector<coord>::iterator it;
+	vector<coord>::iterator it = P.begin();
 	int						size;
 
 	for (int i = 0; i < k; i++) {
@@ -191,8 +194,7 @@ vector<coord> readPoints(ifstream& fin) {
 	vector<coord>	P;
 	coord			c;
 
-	while (!fin.eof()) {
-		fin >> c.x >> c.y;
+	while (fin >> c.x >> c.y) {
 		P.push_back(c);
 	}
 

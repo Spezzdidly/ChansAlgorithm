@@ -47,7 +47,6 @@ int 			findLeftMost(vector<coord> P);
 int				findBottomMost(vector<coord> P);
 double 			polarAngle(coord p1, coord p2);
 void			findPolarAngle(vector<coord>& P);
-void			fooFunc(vector<coord> P);
 vector<coord> 	GrahamsScan(vector<coord> P);
 coord 			nextToTop(stack<coord> P);
 int 			orientation(coord x, coord y, coord z);
