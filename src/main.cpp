@@ -85,6 +85,13 @@ int findBottomMost(vector<coord> P) {
 
 
 
+void fooFunc(vector<coord> P) {
+	// test function for partitioning
+	
+}
+
+
+
 double polarAngle(coord p1, coord p2) {
 	return atan2((p2.y - p1.y), (p2.x - p1.x)) * 180 / PI;
 }
@@ -159,15 +166,21 @@ int orientation(coord x, coord y, coord z) {
 
 
 partitions partition(vector<coord> P, int k, int m) {
-	partitions Q;
+	partitions 				Q;
+	vector<coord>::iterator it;
+	int						size;
 
-	// Main thought is splitting the list up into chunks of "m" size and then the remaining two will be divided
-	// evenly between eachother or remove just enough from the second to last chunk to make the final chunk have 
-	// 3 points so that it meets the minimum requirement for being a convex hull
+	for (int i = 0; i < k; i++) {
+		size = std::min(m, int(std::distance(it, P.end())));
 
-	// It seems like I can get away with leaving the final partition even if it is 1 or 2 points only
-	// I assume this is because Grahams will just return those two points and it is up to the rest of the 
-	// algorithm to determine if the point(s) are or aren't on the hull
+		vector<coord> temp(it, it + size);
+		Q.push_back(temp);
+		
+		it += size;
+
+		if (it == P.end())
+			break;
+	}
 
 	return Q;
 }
