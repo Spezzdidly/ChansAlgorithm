@@ -41,6 +41,7 @@ typedef vector<vector<coord>> partitions;
 
 // Function declarations go here
 stack<coord> 	ChansAlgorithm(vector<coord> P);
+int				computeK(int size, int m);
 double 			distance(coord p1, coord p2);
 void			findDistance(vector<coord>& P);
 int 			findLeftMost(vector<coord> P);
@@ -55,3 +56,4 @@ vector<coord> 	readPoints(ifstream& fin);
 vector<coord>	removeDupes(vector<coord> P);
 void			sortByPolarAngle(vector<coord>& P);
 vector<coord> 	stackToVector(stack<coord> S);
+partitions		subConvexHulls(vector<coord> P, int k, int m);
