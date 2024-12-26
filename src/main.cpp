@@ -3,7 +3,7 @@
 int main(int argc, char** argv) {
 	// Declare variables
 	ifstream		i1, i2;
-	partitions		Partition;
+	partitions		subHull;
 	stack<coord>	ConvexHull;
 	vector<coord>	hull;
 	vector<coord>	P;
@@ -33,11 +33,9 @@ int main(int argc, char** argv) {
 	}
 
 	int m = int(hull.size());
-	double k0 = double(P.size()) / double(m);
-	int k = std::ceil(k0);
+	int k = computeK(int(P.size()), m);
 
-	Partition = partition(P, k, m);
-
+	subHull = subConvexHulls(P, k, m);
 
     i1.close();
 
@@ -51,6 +49,16 @@ stack<coord> ChansAlgorithm(vector<coord> P) {
 	stack<coord>	tempS;
 
 	return tempS;
+}
+
+
+
+int computeK(int size, int m) {
+	// Will finish next commit
+	double k0 = double(size) / double(m);
+	int k = std::ceil(k0);
+
+	return k;
 }
 
 
@@ -234,6 +242,24 @@ vector<coord> stackToVector(stack<coord> S) {
 	for (int i = int(S.size()) - 1; i >= 0; i--) {
 		tmp.at(i) = S.top();
 		S.pop();
+	}
+
+	return tmp;
+}
+
+
+
+partitions subConvexHulls(vector<coord> P, int k, int m) {
+	partitions		Q, tmp;
+	vector<coord>	subHull;
+	Q = partition(P, k, m);
+
+	for (int i = 0; i < int(Q.size()); i++) {
+		subHull = GrahamsScan(Q.at(i));
+
+		tmp.push_back(subHull);
+
+		subHull.clear();
 	}
 
 	return tmp;
