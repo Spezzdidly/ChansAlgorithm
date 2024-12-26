@@ -33,8 +33,7 @@ int main(int argc, char** argv) {
 	}
 
 	int m = int(hull.size());
-	double k0 = double(P.size()) / double(m);
-	int k = std::ceil(k0);
+	int k = computeK(int(P.size()), m);
 
 	subHull = subConvexHulls(P, k, m);
 
@@ -55,10 +54,11 @@ stack<coord> ChansAlgorithm(vector<coord> P) {
 
 
 int computeK(int size, int m) {
-
 	// Will finish next commit
+	double k0 = double(size) / double(m);
+	int k = std::ceil(k0);
 
-	return 0;
+	return k;
 }
 
 
