@@ -44,8 +44,6 @@ int main(int argc, char** argv) {
 
 // function definitions go here
 stack<coord> ChansAlgorithm(vector<coord> P) {
-	int				t, m;
-	bool			foundHull = false;
 	stack<coord>	tempS;
 
 	return tempS;
@@ -54,9 +52,9 @@ stack<coord> ChansAlgorithm(vector<coord> P) {
 
 
 int computeK(int size, int m) {
-	// Will finish next commit
 	double k0 = double(size) / double(m);
-	int k = std::ceil(k0);
+	int k = 0;
+	k = int(k0);
 
 	return k;
 }
@@ -99,6 +97,18 @@ int findBottomMost(vector<coord> P) {
 	}
 
 	return tmp;
+}
+
+
+
+coord findTangentPoint(vector<coord> Q, coord p0) {
+	coord temp;
+
+	// TODO: Stuff
+
+
+
+	return temp;
 }
 
 
