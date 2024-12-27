@@ -46,7 +46,7 @@ double 			distance(coord p1, coord p2);
 void			findDistance(vector<coord>& P);
 int 			findLeftMost(vector<coord> P);
 int				findBottomMost(vector<coord> P);
-coord			findTangentPoint(vector<coord> Q, coord p0);
+coord			findTangentPoint(vector<coord> Q, coord p0, int pos);
 double 			polarAngle(coord p1, coord p2);
 void			findPolarAngle(vector<coord>& P);
 vector<coord> 	GrahamsScan(vector<coord> P);

@@ -7,7 +7,7 @@ int main(int argc, char** argv) {
 	stack<coord>	ConvexHull;
 	vector<coord>	hull;
 	vector<coord>	P;
-	coord		    p1 = { -5, -5 }, p2 = { 0, -5 }, p3 = { 4, -5 };
+	coord		    tangent, p0 = { -1, -8 };
     string          fileName1 = "points\\";
 
 	if (argc != 3) {
@@ -24,18 +24,23 @@ int main(int argc, char** argv) {
         exit(1);
     }
 
-	// testing shit
+	/* 
+	//testing shit
 	P = readPoints(i1);
 	hull = GrahamsScan(P);
-
-	for (int i = 0; i < hull.size(); i++) {
-		cout << "x: " << hull.at(i).x << "\ny: " << hull.at(i).y << endl;
-	}
 
 	int m = int(hull.size());
 	int k = computeK(int(P.size()), m);
 
 	subHull = subConvexHulls(P, k, m);
+	*/
+
+	// testing tangent shit
+	P = readPoints(i1);
+	hull = GrahamsScan(P);
+
+	tangent = findTangentPoint(hull, p0, 0);
+
 
     i1.close();
 
@@ -101,11 +106,18 @@ int findBottomMost(vector<coord> P) {
 
 
 
-coord findTangentPoint(vector<coord> Q, coord p0) {
-	coord temp;
+coord findTangentPoint(vector<coord> Q, coord p0, int pos) {
+	coord	temp;
+	int		left = pos - 1, right = pos + 1;
 
-	// TODO: Stuff
-
+	// Check for abnormal left & right vals
+	if (pos == 0)
+		left = int(Q.size() - 1);
+	else if (pos == int(Q.size()) - 1)
+		right = 0;
+	
+	// TODO: Recursive shit
+	
 
 
 	return temp;
