@@ -39,7 +39,7 @@ int main(int argc, char** argv) {
 	P = readPoints(i1);
 	hull = GrahamsScan(P);
 
-	tangent = findTangentPoint(hull, p0, 0);
+	tangent = findTangentPoint(hull, p0, 0, int(hull.size()) - 1);
 
 
     i1.close();
@@ -106,21 +106,23 @@ int findBottomMost(vector<coord> P) {
 
 
 
-coord findTangentPoint(vector<coord> Q, coord p0, int pos) {
-	coord	temp;
-	int		left = pos - 1, right = pos + 1;
-
-	// Check for abnormal left & right vals
-	if (pos == 0)
-		left = int(Q.size() - 1);
-	else if (pos == int(Q.size()) - 1)
-		right = 0;
+coord findTangentPoint(vector<coord> Q, coord p0, int low, int high) {
+	coord	tmp, tmpP, tmpN;
+	int		prev, next;
 	
-	// TODO: Recursive shit
+	int mid = (high + low) / 2; // tangent point hopefully
+
+	prev = mid - 1;
+	next = mid + 1;
 	
+	// TODO: Binary search ig?
+	if (orientation(Q.at(mid), p0, Q.at(prev)) == 1
+		&& orientation(Q.at(mid), p0, Q.at(next)) == 1)
+		return Q.at(mid);
 
 
-	return temp;
+
+	return tmpP;
 }
 
 
@@ -193,7 +195,7 @@ int orientation(coord x, coord y, coord z) {
 
 	if (value == 0) return 0;	// Collinear
 
-	return (value > 0) ? 1 : 2; // Clock vs Counterclock wise
+	return (value > 0) ? 1 : 2; // CW vs CCW
 }
 
 
