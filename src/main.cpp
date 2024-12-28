@@ -107,7 +107,8 @@ int findBottomMost(vector<coord> P) {
 
 
 coord findTangentPoint(vector<coord> Q, coord p0, int low, int high) {
-	coord	tmp, tmpP, tmpN;
+	coord	nullPt;
+	nullPt.DISTANCE = -INFINITY;
 	int		prev, next;
 	
 	int mid = (high + low) / 2; // tangent point hopefully
@@ -115,14 +116,39 @@ coord findTangentPoint(vector<coord> Q, coord p0, int low, int high) {
 	prev = mid - 1;
 	next = mid + 1;
 	
+	// current point on hull is our mid point for subhull
+	if (Q.at(mid) == p0)
+		return Q.at(mid);
+
+	// go into upper interval if mid was the "wrong" tangent point
+	// can only get upper tangent point on the first pass if it is mid
+	if (orientation(Q.at(mid), p0, Q.at(prev)) == 2
+		&& orientation(Q.at(mid), p0, Q.at(next)) == 2)
+		return findTangentPoint(Q, p0, mid + 1, high);
+
 	// TODO: Binary search ig?
 	if (orientation(Q.at(mid), p0, Q.at(prev)) == 1
 		&& orientation(Q.at(mid), p0, Q.at(next)) == 1)
 		return Q.at(mid);
+	else if (orientation(Q.at(mid), p0, Q.at(prev)) == 0
+		&& orientation(Q.at(mid), p0, Q.at(next)) == 1)
+		return Q.at(mid);
+	else if (orientation(Q.at(mid), p0, Q.at(prev)) == 1
+		&& orientation(Q.at(mid), p0, Q.at(next)) == 0)
+		return Q.at(mid);
 
 
+	// Other conditions that result in needing to choose an 
+	// interval [low, mid - 1] [mid + 1, high]
+	if (orientation(Q.at(mid), p0, Q.at(prev)) == 0
+		&& orientation(Q.at(mid), p0, Q.at(next)) == 2)
+		return findTangentPoint(Q, p0, mid + 1, high);
+	if (orientation(Q.at(mid), p0, Q.at(prev)) == 2
+		&& orientation(Q.at(mid), p0, Q.at(next)) == 0)
+		return findTangentPoint(Q, p0, low, mid - 1);
 
-	return tmpP;
+	// Condition never met there is always a tangent point
+	return nullPt;
 }
 
 
@@ -216,6 +242,9 @@ partitions partition(vector<coord> P, int k, int m) {
 		if (it == P.end())
 			break;
 	}
+
+	// TODO: Make sure each parition is at least 3 points
+
 
 	return Q;
 }
