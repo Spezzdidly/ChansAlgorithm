@@ -7,7 +7,7 @@ int main(int argc, char** argv) {
 	stack<coord>	ConvexHull;
 	vector<coord>	hull;
 	vector<coord>	P;
-	coord		    tangent, p0 = { -1, -8 };
+	coord		    tangent, p0 = { -9, 3 }, p1 = { 7, -9 };
     string          fileName1 = "points\\";
 
 	if (argc != 3) {
@@ -39,7 +39,7 @@ int main(int argc, char** argv) {
 	P = readPoints(i1);
 	hull = GrahamsScan(P);
 
-	tangent = findTangentPoint(hull, p0, 0, int(hull.size()) - 1);
+	tangent = findTangentPoint(hull, p1, 0, int(hull.size()) - 1);
 
 
     i1.close();
@@ -111,10 +111,16 @@ coord findTangentPoint(vector<coord> Q, coord p0, int low, int high) {
 	nullPt.DISTANCE = -INFINITY;
 	int		prev, next;
 	
-	int mid = (high + low) / 2; // tangent point hopefully
+	int mid = round((double(high) + low) / 2); // tangent point hopefully
 
 	prev = mid - 1;
 	next = mid + 1;
+
+	// out of scope
+	if (next == int(Q.size()))
+		next = 0;
+	else if (prev < 0)
+		prev = int(Q.size()) - 1;
 	
 	// current point on hull is our mid point for subhull
 	if (Q.at(mid) == p0)
