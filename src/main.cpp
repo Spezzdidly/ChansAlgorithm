@@ -7,7 +7,7 @@ int main(int argc, char** argv) {
 	stack<coord>	ConvexHull;
 	vector<coord>	hull;
 	vector<coord>	P;
-	coord		    p1 = { -5, -5 }, p2 = { 0, -5 }, p3 = { 4, -5 };
+	coord		    tangent, p0 = { -9, 3 }, p1 = { 7, -9 };
     string          fileName1 = "points\\";
 
 	if (argc != 3) {
@@ -24,18 +24,23 @@ int main(int argc, char** argv) {
         exit(1);
     }
 
-	// testing shit
+	/* 
+	//testing shit
 	P = readPoints(i1);
 	hull = GrahamsScan(P);
-
-	for (int i = 0; i < hull.size(); i++) {
-		cout << "x: " << hull.at(i).x << "\ny: " << hull.at(i).y << endl;
-	}
 
 	int m = int(hull.size());
 	int k = computeK(int(P.size()), m);
 
 	subHull = subConvexHulls(P, k, m);
+	*/
+
+	// testing tangent shit
+	P = readPoints(i1);
+	hull = GrahamsScan(P);
+
+	tangent = findTangentPoint(hull, p1, 0, int(hull.size()) - 1);
+
 
     i1.close();
 
@@ -44,8 +49,6 @@ int main(int argc, char** argv) {
 
 // function definitions go here
 stack<coord> ChansAlgorithm(vector<coord> P) {
-	int				t, m;
-	bool			foundHull = false;
 	stack<coord>	tempS;
 
 	return tempS;
@@ -54,9 +57,9 @@ stack<coord> ChansAlgorithm(vector<coord> P) {
 
 
 int computeK(int size, int m) {
-	// Will finish next commit
 	double k0 = double(size) / double(m);
-	int k = std::ceil(k0);
+	int k = 0;
+	k = int(k0);
 
 	return k;
 }
@@ -99,6 +102,65 @@ int findBottomMost(vector<coord> P) {
 	}
 
 	return tmp;
+}
+
+
+
+coord findTangentPoint(vector<coord> Q, coord p0, int low, int high) {
+	coord	nullPt;
+	nullPt.DISTANCE = -INFINITY;
+	int		prev, next;
+	
+	int mid = round((double(high) + low) / 2); // tangent point hopefully
+
+	prev = mid - 1;
+	next = mid + 1;
+
+	// out of scope
+	if (next == int(Q.size()))
+		next = 0;
+	else if (prev < 0)
+		prev = int(Q.size()) - 1;
+	
+	// current point on hull is our mid point for subhull
+	if (Q.at(mid) == p0)
+		return Q.at(mid);
+
+	// go into upper interval if mid was the "wrong" tangent point
+	// can only get upper tangent point on the first pass if it is mid
+	if (orientation(Q.at(mid), p0, Q.at(prev)) == 2
+		&& orientation(Q.at(mid), p0, Q.at(next)) == 2)
+		return findTangentPoint(Q, p0, mid + 1, high);
+
+	// TODO: Binary search ig?
+	if (orientation(Q.at(mid), p0, Q.at(prev)) == 1
+		&& orientation(Q.at(mid), p0, Q.at(next)) == 1)
+		return Q.at(mid);
+	if (orientation(Q.at(mid), p0, Q.at(prev)) == 0
+		&& orientation(Q.at(mid), p0, Q.at(next)) == 1)
+		return Q.at(mid);
+	if (orientation(Q.at(mid), p0, Q.at(prev)) == 1
+		&& orientation(Q.at(mid), p0, Q.at(next)) == 0)
+		return Q.at(mid);
+
+
+	// Other conditions that result in needing to choose an 
+	// interval [low, mid - 1] [mid + 1, high]
+	if (orientation(Q.at(mid), p0, Q.at(prev)) == 0
+		&& orientation(Q.at(mid), p0, Q.at(next)) == 2)
+		return findTangentPoint(Q, p0, mid + 1, high);
+	if (orientation(Q.at(mid), p0, Q.at(prev)) == 2
+		&& orientation(Q.at(mid), p0, Q.at(next)) == 0)
+		return findTangentPoint(Q, p0, low, mid - 1);
+
+	if (orientation(Q.at(mid), p0, Q.at(prev)) == 1
+		&& orientation(Q.at(mid), p0, Q.at(next)) == 2)
+		return findTangentPoint(Q, p0, mid + 1, high);
+	if (orientation(Q.at(mid), p0, Q.at(prev)) == 2
+		&& orientation(Q.at(mid), p0, Q.at(next)) == 1)
+		return findTangentPoint(Q, p0, low, mid - 1);
+	else
+		return nullPt;
 }
 
 
@@ -171,7 +233,7 @@ int orientation(coord x, coord y, coord z) {
 
 	if (value == 0) return 0;	// Collinear
 
-	return (value > 0) ? 1 : 2; // Clock vs Counterclock wise
+	return (value > 0) ? 1 : 2; // CW vs CCW
 }
 
 
@@ -192,6 +254,9 @@ partitions partition(vector<coord> P, int k, int m) {
 		if (it == P.end())
 			break;
 	}
+
+	// TODO: Make sure each parition is at least 3 points
+
 
 	return Q;
 }
