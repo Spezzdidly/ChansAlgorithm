@@ -130,10 +130,10 @@ coord findTangentPoint(vector<coord> Q, coord p0, int low, int high) {
 	if (orientation(Q.at(mid), p0, Q.at(prev)) == 1
 		&& orientation(Q.at(mid), p0, Q.at(next)) == 1)
 		return Q.at(mid);
-	else if (orientation(Q.at(mid), p0, Q.at(prev)) == 0
+	if (orientation(Q.at(mid), p0, Q.at(prev)) == 0
 		&& orientation(Q.at(mid), p0, Q.at(next)) == 1)
 		return Q.at(mid);
-	else if (orientation(Q.at(mid), p0, Q.at(prev)) == 1
+	if (orientation(Q.at(mid), p0, Q.at(prev)) == 1
 		&& orientation(Q.at(mid), p0, Q.at(next)) == 0)
 		return Q.at(mid);
 
@@ -147,8 +147,14 @@ coord findTangentPoint(vector<coord> Q, coord p0, int low, int high) {
 		&& orientation(Q.at(mid), p0, Q.at(next)) == 0)
 		return findTangentPoint(Q, p0, low, mid - 1);
 
-	// Condition never met there is always a tangent point
-	return nullPt;
+	if (orientation(Q.at(mid), p0, Q.at(prev)) == 1
+		&& orientation(Q.at(mid), p0, Q.at(next)) == 2)
+		return findTangentPoint(Q, p0, mid + 1, high);
+	if (orientation(Q.at(mid), p0, Q.at(prev)) == 2
+		&& orientation(Q.at(mid), p0, Q.at(next)) == 1)
+		return findTangentPoint(Q, p0, low, mid - 1);
+	else
+		return nullPt;
 }
 
 
