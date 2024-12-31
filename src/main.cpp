@@ -9,9 +9,12 @@ int main(int argc, char** argv) {
 	vector<coord>	P;
 	coord		    tangent, p0 = { -9, 3 }, p1 = { 7, -9 };
     string          fileName1 = "points\\";
+	bool			success;
+	int m = 9, k;
 
+	// Make sure to put your sets in the points directory or alter the code lol
 	if (argc != 3) {
-		cout << "Invalid input\n" << "Usage: main.exe <path-to-file> <path-to-file2>";
+		cout << "Invalid input\n" << "Usage: main.exe <file1> <file2>";
 		exit(3);
 	}
 
@@ -24,22 +27,16 @@ int main(int argc, char** argv) {
         exit(1);
     }
 
-	/* 
-	//testing shit
+	// testing jarvis march shit
 	P = readPoints(i1);
-	hull = GrahamsScan(P);
 
-	int m = int(hull.size());
-	int k = computeK(int(P.size()), m);
+	hull = GrahamsScan(P);
+	
+	k = computeK(int(P.size()), m);
 
 	subHull = subConvexHulls(P, k, m);
-	*/
 
-	// testing tangent shit
-	P = readPoints(i1);
-	hull = GrahamsScan(P);
-
-	tangent = findTangentPoint(hull, p1, 0, int(hull.size()) - 1);
+	success = JarvisMarch(subHull, P,  k, m);
 
 
     i1.close();
@@ -72,6 +69,19 @@ double distance(coord p1, coord p2) {
 
 
 
+int findBottomMost(vector<coord> P) {
+	int tmp = 0;
+
+	for (int i = 1; i < int(P.size()); i++) {
+		if (P.at(i).y < P.at(tmp).y)
+			tmp = i;
+	}
+
+	return tmp;
+}
+
+
+
 void findDistance(vector<coord>& P) {
 	for (int i = 1; i < int(P.size()); i++) {
 		P.at(i).DISTANCE = distance(P.at(0), P.at(i));
@@ -93,25 +103,24 @@ int findLeftMost(vector<coord> P) {
 
 
 
-int findBottomMost(vector<coord> P) {
-	int tmp = 0;
-
+void findPolarAngle(vector<coord>& P) {
 	for (int i = 1; i < int(P.size()); i++) {
-		if (P.at(i).y < P.at(tmp).y)
-			tmp = i;
-	}
+		P.at(i).POLAR_ANGLE = polarAngle(P.at(0), P.at(i));
 
-	return tmp;
+		if (P.at(i).POLAR_ANGLE < 0.0)
+			P.at(i).POLAR_ANGLE = 180 + P.at(i).POLAR_ANGLE;
+	}
 }
 
 
 
 coord findTangentPoint(vector<coord> Q, coord p0, int low, int high) {
-	coord	nullPt;
-	nullPt.DISTANCE = -INFINITY;
-	int		prev, next;
+	coord				nullPt;
+	nullPt.DISTANCE =	-INFINITY;
+	int					prev, next;
 	
-	int mid = round((double(high) + low) / 2); // tangent point hopefully
+	int					mid = static_cast<int>(std::round(
+							(double(high) + low) / 2));
 
 	prev = mid - 1;
 	next = mid + 1;
@@ -165,23 +174,6 @@ coord findTangentPoint(vector<coord> Q, coord p0, int low, int high) {
 
 
 
-double polarAngle(coord p1, coord p2) {
-	return atan2((p2.y - p1.y), (p2.x - p1.x)) * 180 / PI;
-}
-
-
-
-void findPolarAngle(vector<coord>& P) {
-	for (int i = 1; i < int(P.size()); i++) {
-		P.at(i).POLAR_ANGLE = polarAngle(P.at(0), P.at(i));
-
-		if (P.at(i).POLAR_ANGLE < 0.0)
-			P.at(i).POLAR_ANGLE = 180 + P.at(i).POLAR_ANGLE;
-	}
-}
-
-
-
 vector<coord> GrahamsScan(vector<coord> P) {
 	coord			temp;
 	stack<coord>	stack;
@@ -212,6 +204,43 @@ vector<coord> GrahamsScan(vector<coord> P) {
 	}
 
 	return stackToVector(stack);
+}
+
+
+
+bool JarvisMarch(partitions Q, vector<coord> P, int k, int m) {
+	// TODO: All of this bullshit ig
+	vector<coord>	tangentPts;
+	coord			tan;
+	int				p0 = findBottomMost(P);
+
+	for (int j = 0; j < m; j++) {
+		for (int i = 0; i < k; i++) {
+			tan = findTangentPoint(Q.at(i), P.at(p0), 0, int(Q.at(i).size()) - 1);
+			
+			// Store polar angle between p0 and tan in order to find the max angle
+			tan.POLAR_ANGLE = polarAngle(P.at(p0), tan);
+
+			tangentPts.push_back(tan);
+
+			// TODO: Create a p_-1 coord that is initialized at (-inf, 0) and
+			// successively updates as the previous point on the hull and I will
+			// use it to maximize the angle between that point, the current point,
+			// and all the points that are the tangent points of the subhulls.
+		}
+	}
+
+	return false;
+}
+
+
+
+coord maximizeAngle(vector<coord> tPts) {
+	coord tmp;
+
+
+
+	return tmp;
 }
 
 
@@ -259,6 +288,12 @@ partitions partition(vector<coord> P, int k, int m) {
 
 
 	return Q;
+}
+
+
+
+double polarAngle(coord p1, coord p2) {
+	return atan2((p2.y - p1.y), (p2.x - p1.x)) * 180 / PI;
 }
 
 
