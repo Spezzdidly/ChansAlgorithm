@@ -69,6 +69,19 @@ double distance(coord p1, coord p2) {
 
 
 
+double findAngle(Vec2 v1, Vec2 v2) {
+	double m1, m2, dot;
+	
+	m1 = v1.findMagnitude();
+	m2 = v2.findMagnitude();
+
+	dot = findDotProduct(v1, v2);
+
+	return acos(dot / (m1 * m2));
+}
+
+
+
 int findBottomMost(vector<coord> P) {
 	int tmp = 0;
 
@@ -86,6 +99,12 @@ void findDistance(vector<coord>& P) {
 	for (int i = 1; i < int(P.size()); i++) {
 		P.at(i).DISTANCE = distance(P.at(0), P.at(i));
 	}
+}
+
+
+
+double findDotProduct(Vec2 v1, Vec2 v2) {
+	return ((v1.x * v2.x) + (v1.y * v2.y));
 }
 
 
@@ -210,37 +229,39 @@ vector<coord> GrahamsScan(vector<coord> P) {
 
 bool JarvisMarch(partitions Q, vector<coord> P, int k, int m) {
 	// TODO: All of this bullshit ig
+	Vec2			v1, v2, n1, n2;
 	vector<coord>	tangentPts;
-	coord			tan;
+	coord			tan, p = { 10000000000, 0 };
 	int				p0 = findBottomMost(P);
+	double			angle = 360;
 
 	for (int j = 0; j < m; j++) {
 		for (int i = 0; i < k; i++) {
 			tan = findTangentPoint(Q.at(i), P.at(p0), 0, int(Q.at(i).size()) - 1);
-			
-			// Store polar angle between p0 and tan in order to find the max angle
-			tan.POLAR_ANGLE = polarAngle(P.at(p0), tan);
 
 			tangentPts.push_back(tan);
 
 			// TODO: Create a p_-1 coord that is initialized at (-inf, 0) and
 			// successively updates as the previous point on the hull and I will
-			// use it to maximize the angle between that point, the current point,
+			// use it to minimize the angle between that point, the current point,
 			// and all the points that are the tangent points of the subhulls.
+			v1 = { tan.x - P.at(p0).x, tan.y - P.at(p0).y };
+			v2 = { p.x - P.at(p0).x, p.y - P.at(p0).y };
+
+			// TODO: Normalize the vectors
+			n1 = v1.normalize();
+			n2 = v2.normalize();
+
+			// Compute angle between those two vectors
+			if (angle > findAngle(v1, v2))
+				angle = findAngle(v1, v2);
+			
 		}
+		// TODO: Update p0, p and reset tangentPts
+
 	}
 
 	return false;
-}
-
-
-
-coord maximizeAngle(vector<coord> tPts) {
-	coord tmp;
-
-
-
-	return tmp;
 }
 
 
