@@ -64,7 +64,7 @@ int 			findLeftMost(vector<coord> P);
 void			findPolarAngle(vector<coord>& P);
 coord			findTangentPoint(vector<coord> Q, coord p0, int low, int high);
 vector<coord> 	GrahamsScan(vector<coord> P);
-bool			JarvisMarch(partitions Q, vector<coord> P, int k, int m);
+bool			JarvisMarch(vector<coord>& convexHull, partitions Q, vector<coord> P, int k, int m);
 coord 			nextToTop(stack<coord> P);
 int 			orientation(coord x, coord y, coord z);
 partitions 		partition(vector<coord> P, int k, int m);

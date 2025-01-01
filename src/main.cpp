@@ -4,13 +4,13 @@ int main(int argc, char** argv) {
 	// Declare variables
 	ifstream		i1, i2;
 	partitions		subHull;
-	stack<coord>	ConvexHull;
+	vector<coord>	ConvexHull;
 	vector<coord>	hull;
 	vector<coord>	P;
 	coord		    tangent, p0 = { -9, 3 }, p1 = { 7, -9 };
     string          fileName1 = "points\\";
 	bool			success;
-	int m = 9, k;
+	int m, k;
 
 	// Make sure to put your sets in the points directory or alter the code lol
 	if (argc != 3) {
@@ -31,12 +31,14 @@ int main(int argc, char** argv) {
 	P = readPoints(i1);
 
 	hull = GrahamsScan(P);
+
+	m = int(hull.size());
 	
 	k = computeK(int(P.size()), m);
 
 	subHull = subConvexHulls(P, k, m);
 
-	success = JarvisMarch(subHull, P,  k, m);
+	success = JarvisMarch(ConvexHull, subHull, P,  k, m);
 
 
     i1.close();
@@ -56,7 +58,7 @@ stack<coord> ChansAlgorithm(vector<coord> P) {
 int computeK(int size, int m) {
 	double k0 = double(size) / double(m);
 	int k = 0;
-	k = int(k0);
+	k = int(std::ceil(k0));
 
 	return k;
 }
@@ -77,7 +79,7 @@ double findAngle(Vec2 v1, Vec2 v2) {
 
 	dot = findDotProduct(v1, v2);
 
-	return acos(dot / (m1 * m2));
+	return acos(dot / (m1 * m2)) * 180 / PI;
 }
 
 
@@ -145,14 +147,26 @@ coord findTangentPoint(vector<coord> Q, coord p0, int low, int high) {
 	next = mid + 1;
 
 	// out of scope
-	if (next == int(Q.size()))
+	if (mid < 0) {
+		mid = int(Q.size()) - 1;
+		prev = mid - 1;
+	}
+	else if (mid >= int(Q.size())) {
+		mid = 0;
+		next = mid + 1;
+	}
+	else if (next >= int(Q.size()))
 		next = 0;
 	else if (prev < 0)
 		prev = int(Q.size()) - 1;
 	
 	// current point on hull is our mid point for subhull
-	if (Q.at(mid) == p0)
+	if (Q.at(mid) == p0 && mid == 0)
 		return Q.at(mid);
+
+	if (orientation(Q.at(mid), p0, Q.at(prev)) == 0
+		&& orientation(Q.at(mid), p0, Q.at(next)) == 0)
+		return findTangentPoint(Q, p0, mid + 1, high);
 
 	// go into upper interval if mid was the "wrong" tangent point
 	// can only get upper tangent point on the first pass if it is mid
@@ -227,38 +241,43 @@ vector<coord> GrahamsScan(vector<coord> P) {
 
 
 
-bool JarvisMarch(partitions Q, vector<coord> P, int k, int m) {
+bool JarvisMarch(vector<coord>& convexHull, partitions Q, vector<coord> P, int k, int m) {
 	// TODO: All of this bullshit ig
 	Vec2			v1, v2, n1, n2;
-	vector<coord>	tangentPts;
-	coord			tan, p = { 10000000000, 0 };
-	int				p0 = findBottomMost(P);
-	double			angle = 360;
+	coord			tan, currTan, p = { -10000000000, 0 }, p0;
+	int				b = findBottomMost(P);
+	double			angle = -1000;
+
+	p0 = P.at(b);
+	convexHull.push_back(p0);
 
 	for (int j = 0; j < m; j++) {
 		for (int i = 0; i < k; i++) {
-			tan = findTangentPoint(Q.at(i), P.at(p0), 0, int(Q.at(i).size()) - 1);
+			tan = findTangentPoint(Q.at(i), p0, 0, int(Q.at(i).size()) - 1);
 
-			tangentPts.push_back(tan);
-
-			// TODO: Create a p_-1 coord that is initialized at (-inf, 0) and
-			// successively updates as the previous point on the hull and I will
-			// use it to minimize the angle between that point, the current point,
-			// and all the points that are the tangent points of the subhulls.
-			v1 = { tan.x - P.at(p0).x, tan.y - P.at(p0).y };
-			v2 = { p.x - P.at(p0).x, p.y - P.at(p0).y };
-
-			// TODO: Normalize the vectors
+			v1 = { tan.x - p0.x, tan.y - p0.y };
+			v2 = { p.x - p0.x, p.y - p0.y };
+	
 			n1 = v1.normalize();
 			n2 = v2.normalize();
 
 			// Compute angle between those two vectors
-			if (angle > findAngle(v1, v2))
-				angle = findAngle(v1, v2);
-			
+			if (angle < findAngle(n1, n2)) {
+				angle = findAngle(n1, n2);
+				currTan = tan;
+			}
 		}
-		// TODO: Update p0, p and reset tangentPts
 
+		// TODO: Update stuff for next iteration
+		p = p0;
+		p0 = currTan;
+		convexHull.push_back(p0);
+		angle = -1000;
+
+		if (convexHull.front() == convexHull.back()) {
+			convexHull.pop_back();
+			return true;
+		}
 	}
 
 	return false;
