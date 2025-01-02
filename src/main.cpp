@@ -4,14 +4,17 @@ int main(int argc, char** argv) {
 	// Declare variables
 	ifstream		i1, i2;
 	partitions		subHull;
-	stack<coord>	ConvexHull;
+	vector<coord>	ConvexHull;
 	vector<coord>	hull;
 	vector<coord>	P;
 	coord		    tangent, p0 = { -9, 3 }, p1 = { 7, -9 };
     string          fileName1 = "points\\";
+	bool			success;
+	int m, k;
 
+	// Make sure to put your sets in the points directory or alter the code lol
 	if (argc != 3) {
-		cout << "Invalid input\n" << "Usage: main.exe <path-to-file> <path-to-file2>";
+		cout << "Invalid input\n" << "Usage: main.exe <file1> <file2>";
 		exit(3);
 	}
 
@@ -24,22 +27,18 @@ int main(int argc, char** argv) {
         exit(1);
     }
 
-	/* 
-	//testing shit
+	// testing jarvis march shit
 	P = readPoints(i1);
+
 	hull = GrahamsScan(P);
 
-	int m = int(hull.size());
-	int k = computeK(int(P.size()), m);
+	m = 9;
+	
+	k = computeK(int(P.size()), m);
 
 	subHull = subConvexHulls(P, k, m);
-	*/
 
-	// testing tangent shit
-	P = readPoints(i1);
-	hull = GrahamsScan(P);
-
-	tangent = findTangentPoint(hull, p1, 0, int(hull.size()) - 1);
+	success = JarvisMarch(ConvexHull, subHull, P,  k, m);
 
 
     i1.close();
@@ -59,7 +58,7 @@ stack<coord> ChansAlgorithm(vector<coord> P) {
 int computeK(int size, int m) {
 	double k0 = double(size) / double(m);
 	int k = 0;
-	k = int(k0);
+	k = int(std::ceil(k0));
 
 	return k;
 }
@@ -72,23 +71,15 @@ double distance(coord p1, coord p2) {
 
 
 
-void findDistance(vector<coord>& P) {
-	for (int i = 1; i < int(P.size()); i++) {
-		P.at(i).DISTANCE = distance(P.at(0), P.at(i));
-	}
-}
+double findAngle(Vec2 v1, Vec2 v2) {
+	double m1, m2, dot;
+	
+	m1 = v1.findMagnitude();
+	m2 = v2.findMagnitude();
 
+	dot = findDotProduct(v1, v2);
 
-
-int findLeftMost(vector<coord> P) {
-	int	tmp = 0;
-
-	for (int i = 1; i < int(P.size()); i++) {
-		if (P.at(i).x < P.at(tmp).x)
-			tmp = i;
-	}
-
-	return tmp;
+	return acos(dot / (m1 * m2)) * 180 / PI;
 }
 
 
@@ -106,67 +97,29 @@ int findBottomMost(vector<coord> P) {
 
 
 
-coord findTangentPoint(vector<coord> Q, coord p0, int low, int high) {
-	coord	nullPt;
-	nullPt.DISTANCE = -INFINITY;
-	int		prev, next;
-	
-	int mid = round((double(high) + low) / 2); // tangent point hopefully
-
-	prev = mid - 1;
-	next = mid + 1;
-
-	// out of scope
-	if (next == int(Q.size()))
-		next = 0;
-	else if (prev < 0)
-		prev = int(Q.size()) - 1;
-	
-	// current point on hull is our mid point for subhull
-	if (Q.at(mid) == p0)
-		return Q.at(mid);
-
-	// go into upper interval if mid was the "wrong" tangent point
-	// can only get upper tangent point on the first pass if it is mid
-	if (orientation(Q.at(mid), p0, Q.at(prev)) == 2
-		&& orientation(Q.at(mid), p0, Q.at(next)) == 2)
-		return findTangentPoint(Q, p0, mid + 1, high);
-
-	// TODO: Binary search ig?
-	if (orientation(Q.at(mid), p0, Q.at(prev)) == 1
-		&& orientation(Q.at(mid), p0, Q.at(next)) == 1)
-		return Q.at(mid);
-	if (orientation(Q.at(mid), p0, Q.at(prev)) == 0
-		&& orientation(Q.at(mid), p0, Q.at(next)) == 1)
-		return Q.at(mid);
-	if (orientation(Q.at(mid), p0, Q.at(prev)) == 1
-		&& orientation(Q.at(mid), p0, Q.at(next)) == 0)
-		return Q.at(mid);
-
-
-	// Other conditions that result in needing to choose an 
-	// interval [low, mid - 1] [mid + 1, high]
-	if (orientation(Q.at(mid), p0, Q.at(prev)) == 0
-		&& orientation(Q.at(mid), p0, Q.at(next)) == 2)
-		return findTangentPoint(Q, p0, mid + 1, high);
-	if (orientation(Q.at(mid), p0, Q.at(prev)) == 2
-		&& orientation(Q.at(mid), p0, Q.at(next)) == 0)
-		return findTangentPoint(Q, p0, low, mid - 1);
-
-	if (orientation(Q.at(mid), p0, Q.at(prev)) == 1
-		&& orientation(Q.at(mid), p0, Q.at(next)) == 2)
-		return findTangentPoint(Q, p0, mid + 1, high);
-	if (orientation(Q.at(mid), p0, Q.at(prev)) == 2
-		&& orientation(Q.at(mid), p0, Q.at(next)) == 1)
-		return findTangentPoint(Q, p0, low, mid - 1);
-	else
-		return nullPt;
+void findDistance(vector<coord>& P) {
+	for (int i = 1; i < int(P.size()); i++) {
+		P.at(i).DISTANCE = distance(P.at(0), P.at(i));
+	}
 }
 
 
 
-double polarAngle(coord p1, coord p2) {
-	return atan2((p2.y - p1.y), (p2.x - p1.x)) * 180 / PI;
+double findDotProduct(Vec2 v1, Vec2 v2) {
+	return ((v1.x * v2.x) + (v1.y * v2.y));
+}
+
+
+
+int findLeftMost(vector<coord> P) {
+	int	tmp = 0;
+
+	for (int i = 1; i < int(P.size()); i++) {
+		if (P.at(i).x < P.at(tmp).x)
+			tmp = i;
+	}
+
+	return tmp;
 }
 
 
@@ -178,6 +131,17 @@ void findPolarAngle(vector<coord>& P) {
 		if (P.at(i).POLAR_ANGLE < 0.0)
 			P.at(i).POLAR_ANGLE = 180 + P.at(i).POLAR_ANGLE;
 	}
+}
+
+
+
+coord findTangentPoint(vector<coord> Q, coord p0, int low, int high) {
+	coord				nullPt;
+	nullPt.DISTANCE =	-INFINITY;
+	int					prev, next;
+	
+	int					mid = static_cast<int>(std::round(
+							(double(high) + low) / 2));
 }
 
 
@@ -212,6 +176,51 @@ vector<coord> GrahamsScan(vector<coord> P) {
 	}
 
 	return stackToVector(stack);
+}
+
+
+
+bool JarvisMarch(vector<coord>& convexHull, partitions Q, vector<coord> P, int k, int m) {
+	/*
+	// TODO: All of this bullshit ig
+	Vec2			v1, v2, n1, n2;
+	coord			tan, currTan, p = { -10000000000, 0 }, p0;
+	int				b = findBottomMost(P);
+	double			angle = -1000;
+
+	p0 = P.at(b);
+	convexHull.push_back(p0);
+
+	for (int j = 0; j < m; j++) {
+		for (int i = 0; i < k; i++) {
+			tan = findTangentPoint(Q.at(i), p0, 0, int(Q.at(i).size()) - 1);
+
+			v1 = { tan.x - p0.x, tan.y - p0.y };
+			v2 = { p.x - p0.x, p.y - p0.y };
+	
+			n1 = v1.normalize();
+			n2 = v2.normalize();
+
+			// Compute angle between those two vectors
+			if (angle < findAngle(n1, n2)) {
+				angle = findAngle(n1, n2);
+				currTan = tan;
+			}
+		}
+
+		// TODO: Update stuff for next iteration
+		p = p0;
+		p0 = currTan;
+		convexHull.push_back(p0);
+		angle = -1000;
+
+		if (convexHull.front() == convexHull.back()) {
+			convexHull.pop_back();
+			return true;
+		}
+	}
+	*/
+	return false;
 }
 
 
@@ -259,6 +268,12 @@ partitions partition(vector<coord> P, int k, int m) {
 
 
 	return Q;
+}
+
+
+
+double polarAngle(coord p1, coord p2) {
+	return atan2((p2.y - p1.y), (p2.x - p1.x)) * 180 / PI;
 }
 
 
