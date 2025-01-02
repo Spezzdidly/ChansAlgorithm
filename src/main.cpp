@@ -32,7 +32,7 @@ int main(int argc, char** argv) {
 
 	hull = GrahamsScan(P);
 
-	m = int(hull.size());
+	m = 9;
 	
 	k = computeK(int(P.size()), m);
 
@@ -142,67 +142,6 @@ coord findTangentPoint(vector<coord> Q, coord p0, int low, int high) {
 	
 	int					mid = static_cast<int>(std::round(
 							(double(high) + low) / 2));
-
-	prev = mid - 1;
-	next = mid + 1;
-
-	// out of scope
-	if (mid < 0) {
-		mid = int(Q.size()) - 1;
-		prev = mid - 1;
-	}
-	else if (mid >= int(Q.size())) {
-		mid = 0;
-		next = mid + 1;
-	}
-	else if (next >= int(Q.size()))
-		next = 0;
-	else if (prev < 0)
-		prev = int(Q.size()) - 1;
-	
-	// current point on hull is our mid point for subhull
-	if (Q.at(mid) == p0 && mid == 0)
-		return Q.at(mid);
-
-	if (orientation(Q.at(mid), p0, Q.at(prev)) == 0
-		&& orientation(Q.at(mid), p0, Q.at(next)) == 0)
-		return findTangentPoint(Q, p0, mid + 1, high);
-
-	// go into upper interval if mid was the "wrong" tangent point
-	// can only get upper tangent point on the first pass if it is mid
-	if (orientation(Q.at(mid), p0, Q.at(prev)) == 2
-		&& orientation(Q.at(mid), p0, Q.at(next)) == 2)
-		return findTangentPoint(Q, p0, mid + 1, high);
-
-	// TODO: Binary search ig?
-	if (orientation(Q.at(mid), p0, Q.at(prev)) == 1
-		&& orientation(Q.at(mid), p0, Q.at(next)) == 1)
-		return Q.at(mid);
-	if (orientation(Q.at(mid), p0, Q.at(prev)) == 0
-		&& orientation(Q.at(mid), p0, Q.at(next)) == 1)
-		return Q.at(mid);
-	if (orientation(Q.at(mid), p0, Q.at(prev)) == 1
-		&& orientation(Q.at(mid), p0, Q.at(next)) == 0)
-		return Q.at(mid);
-
-
-	// Other conditions that result in needing to choose an 
-	// interval [low, mid - 1] [mid + 1, high]
-	if (orientation(Q.at(mid), p0, Q.at(prev)) == 0
-		&& orientation(Q.at(mid), p0, Q.at(next)) == 2)
-		return findTangentPoint(Q, p0, mid + 1, high);
-	if (orientation(Q.at(mid), p0, Q.at(prev)) == 2
-		&& orientation(Q.at(mid), p0, Q.at(next)) == 0)
-		return findTangentPoint(Q, p0, low, mid - 1);
-
-	if (orientation(Q.at(mid), p0, Q.at(prev)) == 1
-		&& orientation(Q.at(mid), p0, Q.at(next)) == 2)
-		return findTangentPoint(Q, p0, mid + 1, high);
-	if (orientation(Q.at(mid), p0, Q.at(prev)) == 2
-		&& orientation(Q.at(mid), p0, Q.at(next)) == 1)
-		return findTangentPoint(Q, p0, low, mid - 1);
-	else
-		return nullPt;
 }
 
 
@@ -242,6 +181,7 @@ vector<coord> GrahamsScan(vector<coord> P) {
 
 
 bool JarvisMarch(vector<coord>& convexHull, partitions Q, vector<coord> P, int k, int m) {
+	/*
 	// TODO: All of this bullshit ig
 	Vec2			v1, v2, n1, n2;
 	coord			tan, currTan, p = { -10000000000, 0 }, p0;
@@ -279,7 +219,7 @@ bool JarvisMarch(vector<coord>& convexHull, partitions Q, vector<coord> P, int k
 			return true;
 		}
 	}
-
+	*/
 	return false;
 }
 
