@@ -13,8 +13,8 @@ int main(int argc, char** argv) {
 	int m, k;
 
 	// Make sure to put your sets in the points directory or alter the code lol
-	if (argc != 3) {
-		cout << "Invalid input\n" << "Usage: main.exe <file1> <file2>";
+	if (argc != 2) {
+		cout << "Invalid input\n" << "Usage: main.exe <file1>";
 		exit(3);
 	}
 
@@ -31,6 +31,10 @@ int main(int argc, char** argv) {
 	P = readPoints(i1);
 	
 	ConvexHull = ChansAlgorithm(P);
+
+	for (int i = 0; i < int(ConvexHull.size()); i++) {
+		cout << "(" << ConvexHull[i].x << ", " << ConvexHull[i].y << ")\n";
+	}
 
 
     i1.close();
