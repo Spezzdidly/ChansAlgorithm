@@ -32,7 +32,7 @@ int main(int argc, char** argv) {
 
 	hull = GrahamsScan(P);
 
-	m = 1;
+	m = 8;
 	
 	k = computeK(int(P.size()), m);
 
