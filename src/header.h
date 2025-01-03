@@ -15,6 +15,8 @@
 using namespace std;
 using namespace chrono;
 
+enum {COLLINEAR = 0, CW = 1, CCW = -1};
+
 // Coordinate structure
 struct coord {
 	double x = 0.0;
@@ -62,7 +64,7 @@ void			findDistance(vector<coord>& P);
 double			findDotProduct(Vec2 v1, Vec2 v2);
 int 			findLeftMost(vector<coord> P);
 void			findPolarAngle(vector<coord>& P);
-coord			findTangentPoint(vector<coord> Q, coord p0, int low, int high);
+coord			findTangentPoint(vector<coord> Q, coord p0);
 vector<coord> 	GrahamsScan(vector<coord> P);
 bool			JarvisMarch(vector<coord>& convexHull, partitions Q, vector<coord> P, int k, int m);
 coord 			nextToTop(stack<coord> P);

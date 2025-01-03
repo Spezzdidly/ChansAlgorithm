@@ -32,7 +32,7 @@ int main(int argc, char** argv) {
 
 	hull = GrahamsScan(P);
 
-	m = 9;
+	m = 1;
 	
 	k = computeK(int(P.size()), m);
 
@@ -134,14 +134,50 @@ void findPolarAngle(vector<coord>& P) {
 }
 
 
+// Credit to Tom Switzer (tixxit) https://gist.github.com/tixxit/252229
+coord findTangentPoint(vector<coord> Q, coord p0) {
+	int					n = int(Q.size());
+	int					left = 0, right = n - 1;
+	int					lPrev = orientation(p0, Q[0], Q[n - 1]);
+	int					lNext = orientation(p0, Q[0], Q[(left + 1) % n]);
+	int mid, mPrev, mNext, mSide;
 
-coord findTangentPoint(vector<coord> Q, coord p0, int low, int high) {
-	coord				nullPt;
-	nullPt.DISTANCE =	-INFINITY;
-	int					prev, next;
+	while (left < right) {
+		mid = (left + right) / 2;
+		mPrev = orientation(p0, Q[mid], Q[(mid - 1 + n) % n]);
+		mNext = orientation(p0, Q[mid], Q[(mid + 1) % n]);
+		mSide = orientation(p0, Q[left], Q[mid]);
+
+		// Small hull size
+		if (n == 1)
+			return Q[0];
+		else if (n == 2) {
+			int o = orientation(p0, Q[0], Q[1]);
+			if (o == CCW || o == COLLINEAR)
+				return Q[0];
+			else
+				return Q[1];
+		}
+
+		if (mPrev != CCW && mNext != CCW) {
+			if (mPrev == 0 && mNext == 0)
+				return Q[mid - 1];
+
+			return Q[mid];
+		}
+		else if (lNext == 0)
+			return Q[left];
+		else if (mSide == CW && (lNext == CCW || lPrev == lNext)
+			|| mSide == CCW && mPrev == CCW)
+			right = mid;
+		else {
+			left = mid + 1;
+			lPrev = -mNext;
+			lNext = orientation(p0, Q[left], Q[(left + 1) % n]);
+		}
+	}
 	
-	int					mid = static_cast<int>(std::round(
-							(double(high) + low) / 2));
+	return Q[left];
 }
 
 
@@ -168,7 +204,7 @@ vector<coord> GrahamsScan(vector<coord> P) {
 
 	// Main loop of Grahams 
 	for (int i = 0; i < int(P.size()); i++) {
-		while (stack.size() > 1 && orientation(nextToTop(stack), stack.top(), P.at(i)) != 2) {
+		while (stack.size() > 1 && orientation(nextToTop(stack), stack.top(), P.at(i)) != CCW) {
 			stack.pop();
 		}
 
@@ -181,19 +217,18 @@ vector<coord> GrahamsScan(vector<coord> P) {
 
 
 bool JarvisMarch(vector<coord>& convexHull, partitions Q, vector<coord> P, int k, int m) {
-	/*
 	// TODO: All of this bullshit ig
 	Vec2			v1, v2, n1, n2;
-	coord			tan, currTan, p = { -10000000000, 0 }, p0;
+	coord			tan, currTan, p = { 10000000000, 0 }, p0;
 	int				b = findBottomMost(P);
-	double			angle = -1000;
+	double			angle = -360;
 
 	p0 = P.at(b);
 	convexHull.push_back(p0);
 
 	for (int j = 0; j < m; j++) {
 		for (int i = 0; i < k; i++) {
-			tan = findTangentPoint(Q.at(i), p0, 0, int(Q.at(i).size()) - 1);
+			tan = findTangentPoint(Q.at(i), p0);
 
 			v1 = { tan.x - p0.x, tan.y - p0.y };
 			v2 = { p.x - p0.x, p.y - p0.y };
@@ -212,14 +247,13 @@ bool JarvisMarch(vector<coord>& convexHull, partitions Q, vector<coord> P, int k
 		p = p0;
 		p0 = currTan;
 		convexHull.push_back(p0);
-		angle = -1000;
+		angle = -360;
 
 		if (convexHull.front() == convexHull.back()) {
 			convexHull.pop_back();
 			return true;
 		}
 	}
-	*/
 	return false;
 }
 
@@ -242,7 +276,7 @@ int orientation(coord x, coord y, coord z) {
 
 	if (value == 0) return 0;	// Collinear
 
-	return (value > 0) ? 1 : 2; // CW vs CCW
+	return (value > 0) ? 1 : -1; // CW vs CCW
 }
 
 
@@ -263,9 +297,6 @@ partitions partition(vector<coord> P, int k, int m) {
 		if (it == P.end())
 			break;
 	}
-
-	// TODO: Make sure each parition is at least 3 points
-
 
 	return Q;
 }
