@@ -55,7 +55,7 @@ bool operator!=(const coord& point1, const coord& point2) {
 typedef vector<vector<coord>> partitions;
 
 // Function declarations go here
-stack<coord> 	ChansAlgorithm(vector<coord> P);
+vector<coord> 	ChansAlgorithm(vector<coord> P);
 int				computeK(int size, int m);
 double 			distance(coord p1, coord p2);
 double			findAngle(Vec2 v1, Vec2 v2);

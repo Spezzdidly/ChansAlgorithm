@@ -29,16 +29,8 @@ int main(int argc, char** argv) {
 
 	// testing jarvis march shit
 	P = readPoints(i1);
-
-	hull = GrahamsScan(P);
-
-	m = 8;
 	
-	k = computeK(int(P.size()), m);
-
-	subHull = subConvexHulls(P, k, m);
-
-	success = JarvisMarch(ConvexHull, subHull, P,  k, m);
+	ConvexHull = ChansAlgorithm(P);
 
 
     i1.close();
@@ -47,10 +39,29 @@ int main(int argc, char** argv) {
 }
 
 // function definitions go here
-stack<coord> ChansAlgorithm(vector<coord> P) {
-	stack<coord>	tempS;
+vector<coord> ChansAlgorithm(vector<coord> P) {
+	partitions		subHulls;
+	vector<coord>	hull;
+	int				m, k;
+	bool			tf;
 
-	return tempS;
+	// TODO: rapidly increase m and compute the hull
+	for (int t = 1; t <= ceil(std::log(std::log(double(P.size())))); t++) {
+		m = std::min(pow(2, pow(2, t)), double(P.size()));
+		k = computeK(int(P.size()), m);
+
+		subHulls = subConvexHulls(P, k, m);
+
+		tf = JarvisMarch(hull, subHulls, P, k, m);
+
+		if (tf)
+			return hull;
+
+		hull.clear();
+	}
+
+
+	return hull;
 }
 
 
