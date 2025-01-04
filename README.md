@@ -22,6 +22,10 @@ I used visual studio as my IDE of choice for this project so that handles the co
 ```
 g++ -I src src/main.cpp -o main.exe
 ```
+For mac systems you will need to type this
+```
+g++ -std=c++14 -I src src/main.cpp -o main.exe
+```
 You will need to alter the code so that the slash ("\\") is correct for linux systems ("/") since it is currently designed to run on windows which uses the back slash.
 
 ## Authors
