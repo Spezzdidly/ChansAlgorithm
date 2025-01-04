@@ -32,7 +32,7 @@ You will need to alter the code so that the slash ("\\") is correct for linux sy
 * **Spezzdidly**
 
 ## License
-This project is licensed under the MIT License
+This project is licensed under the MIT License. Check [LICENSE.md](LICENSE.md) for more info.
 
 ## Acknowledgements
 Thank you to **Tom Switzer** (tixxit) specifically for his tangent function which can be found [here](https://gist.github.com/tixxit/252229)
