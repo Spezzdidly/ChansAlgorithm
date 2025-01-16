@@ -2,41 +2,46 @@
 
 int main(int argc, char** argv) {
 	// Declare variables
-	ifstream		i1, i2;
+	ifstream		i1;
+	ofstream		fout;
 	partitions		subHull;
-	vector<coord>	ConvexHull;
-	vector<coord>	hull;
+	vector<coord>	ConvexHull, hull;
 	vector<coord>	P;
 	coord		    tangent, p0 = { -9, 3 }, p1 = { 7, -9 };
-    string          fileName1 = "points\\";
-	bool			success;
-	int m, k;
+    string          fileName1 = "points\\", fileName2 = "src\\";
 
 	// Make sure to put your sets in the points directory or alter the code lol
-	if (argc != 2) {
-		cout << "Invalid input\n" << "Usage: main.exe <file1>";
+	if (argc != 3) {
+		cout << "Invalid input\n" << "Usage: main.exe <outputfile> <file1>";
 		exit(3);
 	}
 
-	fileName1 += static_cast<string>(argv[1]);
+	fileName1 += static_cast<string>(argv[2]);
+	fileName2 += static_cast<string>(argv[1]);
 
     i1.open(fileName1);
+	fout.open(fileName2);
 
     if (!i1.is_open()){
         cout << fileName1 << " failed to open.\n";
         exit(1);
     }
+	if (!fout.is_open()) {
+		cout << fileName2 << " failed to open.\n";
+		exit(1);
+	}
 
 	// testing jarvis march shit
 	P = readPoints(i1);
 	
+	hull = GrahamsScan(P);
+
+	//TODO: Bug fixes something isn't working... :3
 	ConvexHull = ChansAlgorithm(P);
 
-	for (int i = 0; i < int(ConvexHull.size()); i++) {
-		cout << "(" << ConvexHull[i].x << ", " << ConvexHull[i].y << ")\n";
-	}
+	outputHull(fout, P);
 
-
+	fout.close();
     i1.close();
 
 	return 0;
@@ -51,7 +56,7 @@ vector<coord> ChansAlgorithm(vector<coord> P) {
 
 	// TODO: rapidly increase m and compute the hull
 	for (int t = 1; t <= ceil(std::log(std::log(double(P.size())))); t++) {
-		m = std::min(pow(2, pow(2, t)), double(P.size()));
+		m = static_cast<int>(std::min(pow(2, pow(2, t)), double(P.size())));
 		k = computeK(int(P.size()), m);
 
 		subHulls = subConvexHulls(P, k, m);
@@ -292,6 +297,14 @@ int orientation(coord x, coord y, coord z) {
 	if (value == 0) return 0;	// Collinear
 
 	return (value > 0) ? 1 : -1; // CW vs CCW
+}
+
+
+
+void outputHull(ofstream& fout, vector<coord> hull) {
+	for (int i = 0; i < int(hull.size()); i++) {
+		fout << hull[i].x << "," << hull[i].y << "\n";
+	}
 }
 
 

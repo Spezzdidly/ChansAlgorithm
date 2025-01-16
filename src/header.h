@@ -69,6 +69,7 @@ vector<coord> 	GrahamsScan(vector<coord> P);
 bool			JarvisMarch(vector<coord>& convexHull, partitions Q, vector<coord> P, int k, int m);
 coord 			nextToTop(stack<coord> P);
 int 			orientation(coord x, coord y, coord z);
+void			outputHull(ofstream& fout, vector<coord> hull);
 partitions 		partition(vector<coord> P, int k, int m);
 double 			polarAngle(coord p1, coord p2);
 vector<coord> 	readPoints(ifstream& fin);
