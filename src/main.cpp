@@ -39,7 +39,7 @@ int main(int argc, char** argv) {
 	//TODO: Bug fixes something isn't working... :3
 	ConvexHull = ChansAlgorithm(P);
 
-	outputHull(fout, P);
+	outputHull(fout, ConvexHull);
 
 	fout.close();
     i1.close();
@@ -55,7 +55,7 @@ vector<coord> ChansAlgorithm(vector<coord> P) {
 	bool			tf;
 
 	// TODO: rapidly increase m and compute the hull
-	for (int t = 1; t <= ceil(std::log(std::log(double(P.size())))); t++) {
+	for (int t = 1; t <= int(P.size()); t++) {
 		m = static_cast<int>(std::min(pow(2, pow(2, t)), double(P.size())));
 		k = computeK(int(P.size()), m);
 
